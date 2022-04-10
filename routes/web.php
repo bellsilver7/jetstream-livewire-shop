@@ -25,4 +25,8 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // 상품관리
+    Route::get('/products', App\Http\Livewire\products::class)->name('product');
 });
+
