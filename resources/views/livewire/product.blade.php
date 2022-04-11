@@ -18,7 +18,7 @@
             @endif
             <button wire:click="create()"
                 class="my-4 inline-flex justify-center rounded-md border border-transparent px-4 py-2 bg-green-600 text-base font-bold text-white shadow-sm hover:bg-green-700">
-                Create Student
+                Create Product
             </button>
             @if($isModalOpen)
             @include('livewire.create')
