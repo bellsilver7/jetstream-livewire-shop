@@ -30,12 +30,12 @@
                         <th class="px-4 py-2">Image</th>
                         <th class="px-4 py-2">Title</th>
                         <th class="px-4 py-2">Price</th>
-                        <th class="px-4 py-2">Created_At</th>
+                        <th class="px-4 py-2">Created_At<br/>/ Updated_At</th>
                         <th class="px-4 py-2">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($products as $product)
+                    @forelse($products as $product)
                     <tr>
                         <td class="border px-4 py-2">{{ $product->id }}</td>
                         <td class="border px-4 py-2">
@@ -43,7 +43,10 @@
                         </td>
                         <td class="border px-4 py-2">{{ $product->title }}</td>
                         <td class="border px-4 py-2 text-right">{{ number_format($product->price) }}</td>
-                        <td class="border px-4 py-2">{{ $product->created_at}}</td>
+                        <td class="border px-4 py-2">
+                            {{ $product->created_at}}<br/>
+                            / {{ $product->updated_at}}
+                        </td>
                         <td class="border px-4 py-2">
                             <button wire:click="edit({{ $product->id }})" type="button"
                                 class="my-4 inline-flex justify-center rounded-md border border-transparent px-4 py-2 bg-blue-500 text-base font-bold text-white shadow-sm hover:bg-blue-600">
@@ -55,9 +58,16 @@
                             </button>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td class="border px-4 py-2 text-center" colspan="6">No data!</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
+            <div class="py-2">
+                {{ $products->links() }}
+            </div>
         </div>
     </div>
 </div>

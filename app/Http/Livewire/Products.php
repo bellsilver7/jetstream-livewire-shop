@@ -3,20 +3,32 @@
 namespace App\Http\Livewire;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
 class Products extends Component
 {
     use WithFileUploads;
+    use WithPagination;
 
-    public $products, $title, $content, $image, $price, $product_id;
+    public $title, $content, $image, $price, $product_id;
     public $isModalOpen = false;
+    public $pageSize = 5;
 
     public function render()
     {
-        $this->products = Product::all();
-        return view('livewire.product');
+        return view('livewire.product', [
+            'products' => Product::where('user_id', Auth::id())
+                ->latest()
+                ->paginate($this->pageSize)
+        ]);
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
 
     public function create()
@@ -35,19 +47,11 @@ class Products extends Component
         $this->isModalOpen = false;
     }
 
-    private function resetCreateForm()
-    {
-        $this->title = '';
-        $this->content = '';
-        $this->image = '';
-        $this->price = 0;
-    }
-
     public function edit($id)
     {
         $product = Product::findOrFail($id);
         $this->product_id = $id;
-        $this->user_id = 1;
+        $this->user_id = Auth::id();
         $this->title = $product->title;
         $this->content = $product->content;
         $this->image = $product->image;
@@ -61,7 +65,7 @@ class Products extends Component
         $filePath = $this->image->store('products');
 
         Product::updateOrCreate(['id' => $this->product_id], [
-            'user_id' => 1,
+            'user_id' => Auth::id(),
             'title' => $this->title,
             'content' => $this->content,
             'image' => $filePath,
@@ -76,5 +80,18 @@ class Products extends Component
     {
         Product::find($id)->delete();
         session()->flash('message', 'Product deleted.');
+    }
+
+    //==================================================
+    // Private Functions
+    //==================================================
+
+    private function resetCreateForm()
+    {
+        $this->product_id = '';
+        $this->title = '';
+        $this->content = '';
+        $this->image = '';
+        $this->price = 0;
     }
 }
